@@ -7,5 +7,4 @@ class RestaurantViolation < ApplicationRecord
   validates :inspection_date, presence: true
   validates :violation_date, presence: true
   validates :violation_type, presence: true
-  validates :risk_category, presence: true
 end

@@ -12,8 +12,11 @@ bundle install
 
 ```bash
 rails db:migrate
-rails server
+rails console
+-> ImportViolationsJob.perform_now('app/assets/data/sf_restaurants.csv')
 ```
+
+
 
 ## DB schema
 
