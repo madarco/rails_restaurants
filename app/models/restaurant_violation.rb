@@ -10,6 +10,6 @@ class RestaurantViolation < ApplicationRecord
 
   def self.by_restaurant_name(name)
     joins(:restaurant)
-      .where('restaurants.name ILIKE ?', "%#{name}%")
+      .where("restaurants.name ILIKE ?", "%#{name}%")
   end
 end
