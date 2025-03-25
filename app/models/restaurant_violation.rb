@@ -7,4 +7,9 @@ class RestaurantViolation < ApplicationRecord
   validates :inspection_date, presence: true
   validates :violation_date, presence: true
   validates :violation_type, presence: true
+
+  def self.by_restaurant_name(name)
+    joins(:restaurant)
+      .where('restaurants.name ILIKE ?', "%#{name}%")
+  end
 end
