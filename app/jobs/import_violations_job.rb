@@ -2,8 +2,8 @@ class ImportViolationsJob < ApplicationJob
   queue_as :default
 
   def perform(file_path, limit = nil)
-    require 'csv'
-    
+    require "csv"
+
     row_count = 0
     CSV.foreach(file_path, headers: true) do |row|
       break if limit && row_count >= limit
@@ -12,35 +12,35 @@ class ImportViolationsJob < ApplicationJob
         ActiveRecord::Base.transaction do
           # Find or create Owner with exact matching attributes
           owner = Owner.find_or_create_by!(
-            name: row['owner_name'],
-            address: row['owner_address'],
-            city: row['owner_city'],
-            state: row['owner_state'],
-            zip: row['owner_zip']
+            name: row["owner_name"],
+            address: row["owner_address"],
+            city: row["owner_city"],
+            state: row["owner_state"],
+            zip: row["owner_zip"]
           )
 
           # Find or create Restaurant with exact matching attributes
           restaurant = Restaurant.find_or_create_by!(
-            name: row['name'],
-            address: row['address'],
-            city: row['city'],
-            postal_code: row['postal_code'],
-            phone_number: row['phone_number'],
+            name: row["name"],
+            address: row["address"],
+            city: row["city"],
+            postal_code: row["postal_code"],
+            phone_number: row["phone_number"],
             owner_id: owner.id
           )
 
           # Find or create InspectionType
           inspection_type = InspectionType.find_or_create_by!(
-            name: row['inspection_type']
+            name: row["inspection_type"]
           )
 
           # Find or create ViolationType
           violation_type = ViolationType.find_or_create_by!(
-            code: row['violation_type']
+            code: row["violation_type"]
           ) do |vt|
-            vt.name = row['violation_type']
-            vt.description = row['description']
-            vt.risk_category = row['risk_category']
+            vt.name = row["violation_type"]
+            vt.description = row["description"]
+            vt.risk_category = row["risk_category"]
           end
 
           # Create RestaurantViolation
@@ -48,9 +48,9 @@ class ImportViolationsJob < ApplicationJob
             restaurant: restaurant,
             inspection_type: inspection_type,
             violation_type: violation_type,
-            inspection_score: row['inspection_score'],
-            inspection_date: parse_date(row['inspection_date']),
-            violation_date: parse_date(row['violation_date'])
+            inspection_score: row["inspection_score"],
+            inspection_date: parse_date(row["inspection_date"]),
+            violation_date: parse_date(row["violation_date"])
           )
 
           # Increment counter only if a new record was created
@@ -72,10 +72,10 @@ class ImportViolationsJob < ApplicationJob
 
   def parse_date(date_str)
     return nil if date_str.blank?
-    
+
     # Handle the format YYYYMMDD
     if date_str.match?(/\A\d{8}\z/)
-      Date.strptime(date_str, '%Y%m%d')
+      Date.strptime(date_str, "%Y%m%d")
     else
       Date.parse(date_str)
     end
